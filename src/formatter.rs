@@ -17,7 +17,7 @@ pub struct Formatter<'a> {
     /// Number of spaces to start a new line with.
     spaces: usize,
 
-    /// Number of spaces per indentiation
+    /// Number of spaces per indentation
     indent: usize,
 }
 
@@ -32,6 +32,11 @@ impl<'a> Formatter<'a> {
         }
     }
 
+    /// Set the number of spaces per indentation.
+    pub fn set_indent(&mut self, indent: usize) {
+        self.indent = indent;
+    }
+
     /// Wrap the given function inside a block.
     pub fn block<F>(&mut self, f: F) -> fmt::Result
     where
@@ -43,8 +48,7 @@ impl<'a> Formatter<'a> {
 
         writeln!(self, "{{")?;
         self.indent(f)?;
-        writeln!(self, "}}")?;
-        Ok(())
+        writeln!(self, "}}")
     }
 
     /// Call the given function with the indentation level incremented by one.
@@ -63,10 +67,8 @@ impl<'a> Formatter<'a> {
         self.dst.is_empty() || self.dst.as_bytes().last() == Some(&b'\n')
     }
 
-    fn push_spaces(&mut self) {
-        for _ in 0..self.spaces {
-            self.dst.push_str(" ");
-        }
+    fn push_spaces(&mut self) -> fmt::Result {
+        write!(self.dst, "{:1$}", "", self.spaces)
     }
 }
 
@@ -85,7 +87,7 @@ impl<'a> fmt::Write for Formatter<'a> {
             let do_indent = should_indent && !line.is_empty() && line.as_bytes()[0] != b'\n';
 
             if do_indent {
-                self.push_spaces();
+                self.push_spaces()?;
             }
 
             // If this loops again, then we just wrote a new line
