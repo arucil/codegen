@@ -6,7 +6,7 @@ use crate::bound::Bound;
 use crate::docs::Docs;
 use crate::field::Field;
 use crate::formatter::{fmt_bounds, fmt_generics};
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
 
 use crate::r#type::Type;
 

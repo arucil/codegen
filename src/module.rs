@@ -1,7 +1,7 @@
 use std::fmt::{self, Write};
 
 use crate::docs::Docs;
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
 use crate::function::Function;
 use crate::scope::Scope;
 
@@ -174,9 +174,12 @@ impl Module {
         self.scope.push_trait(item);
         self
     }
+}
 
+
+impl Format for Module {
     /// Formats the module using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         if let Some(ref vis) = self.vis {
             write!(fmt, "{} ", vis)?;
         }

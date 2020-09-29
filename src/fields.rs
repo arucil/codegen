@@ -1,7 +1,7 @@
 use std::fmt::{self, Write};
 
 use crate::field::Field;
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
 
 use crate::r#type::Type;
 
@@ -58,8 +58,11 @@ impl Fields {
 
         self
     }
+}
 
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+
+impl Format for Fields {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         match self {
             Fields::Named(fields) => {
                 assert!(!fields.is_empty());

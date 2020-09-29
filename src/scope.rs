@@ -6,7 +6,7 @@ use std::fmt::{self, Write};
 use indexmap::IndexMap;
 
 use crate::docs::Docs;
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
 use crate::function::Function;
 use crate::import::Import;
 use crate::item::Item;
@@ -273,36 +273,6 @@ impl Scope {
         ret
     }
 
-    /// Formats the scope using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        self.fmt_imports(fmt)?;
-
-        if !self.imports.is_empty() {
-            writeln!(fmt)?;
-        }
-
-        for (i, item) in self.items.iter().enumerate() {
-            if i != 0 {
-                writeln!(fmt)?;
-            }
-
-            match item {
-                Item::Module(v) => v.fmt(fmt)?,
-                Item::Struct(v) => v.fmt(fmt)?,
-                Item::Function(v) => v.fmt(false, fmt)?,
-                Item::Trait(v) => v.fmt(fmt)?,
-                Item::Enum(v) => v.fmt(fmt)?,
-                Item::DiscriminantEnum(v) => v.fmt(fmt)?,
-                Item::Impl(v) => v.fmt(fmt)?,
-                Item::Raw(v) => {
-                    writeln!(fmt, "{}", v)?;
-                }
-            }
-        }
-
-        Ok(())
-    }
-
     fn fmt_imports(&self, fmt: &mut Formatter) -> fmt::Result {
         // First, collect all visibilities
         let mut visibilities = vec![];
@@ -349,6 +319,39 @@ impl Scope {
                     } else if tys.len() == 1 {
                         writeln!(fmt, "{};", tys[0])?;
                     }
+                }
+            }
+        }
+
+        Ok(())
+    }
+}
+
+
+impl Format for Scope {
+    /// Formats the scope using the given formatter.
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        self.fmt_imports(fmt)?;
+
+        if !self.imports.is_empty() {
+            writeln!(fmt)?;
+        }
+
+        for (i, item) in self.items.iter().enumerate() {
+            if i != 0 {
+                writeln!(fmt)?;
+            }
+
+            match item {
+                Item::Module(v) => v.fmt(fmt)?,
+                Item::Struct(v) => v.fmt(fmt)?,
+                Item::Function(v) => v.fmt(false, fmt)?,
+                Item::Trait(v) => v.fmt(fmt)?,
+                Item::Enum(v) => v.fmt(fmt)?,
+                Item::DiscriminantEnum(v) => v.fmt(fmt)?,
+                Item::Impl(v) => v.fmt(fmt)?,
+                Item::Raw(v) => {
+                    writeln!(fmt, "{}", v)?;
                 }
             }
         }

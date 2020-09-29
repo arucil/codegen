@@ -1,7 +1,7 @@
 use std::fmt::{self, Write};
 
 use crate::body::Body;
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
 
 
 /// Defines a code block. This is used to define a function body.
@@ -43,9 +43,12 @@ impl Block {
         self.after = Some(after.into());
         self
     }
+}
 
+
+impl Format for Block {
     /// Formats the block using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         if let Some(ref before) = self.before {
             write!(fmt, "{}", before)?;
         }
@@ -68,7 +71,7 @@ impl Block {
 
         write!(fmt, "}}")?;
 
-        if let Some(ref after) = self.after {
+        if let Some(after) = &self.after {
             write!(fmt, "{}", after)?;
         }
 

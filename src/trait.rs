@@ -2,7 +2,7 @@ use std::fmt::{self, Write};
 
 use crate::associated_type::AssociatedType;
 use crate::bound::Bound;
-use crate::formatter::{Formatter, fmt_bound_rhs};
+use crate::formatter::{Formatter, Format, fmt_bound_rhs};
 use crate::function::Function;
 use crate::type_def::TypeDef;
 
@@ -104,9 +104,12 @@ impl Trait {
         self.fns.push(item);
         self
     }
+}
 
+
+impl Format for Trait {
     /// Formats the scope using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         self.type_def.fmt_head("trait", &self.parents, fmt)?;
 
         fmt.block(|fmt| {

@@ -2,7 +2,7 @@ use std::fmt::{self, Write};
 
 use crate::bound::Bound;
 use crate::field::Field;
-use crate::formatter::{Formatter, fmt_bounds, fmt_generics};
+use crate::formatter::{Formatter, Format, fmt_bounds, fmt_generics};
 use crate::function::Function;
 
 use crate::r#type::Type;
@@ -121,9 +121,12 @@ impl Impl {
         self.fns.push(item);
         self
     }
+}
 
+
+impl Format for Impl {
     /// Formats the impl block using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         for m in self.macros.iter() {
             writeln!(fmt, "{}", m)?;
         }

@@ -92,8 +92,12 @@ impl<V: EnumVariant> Enum<V> {
         self
     }
 
+}
+
+
+impl<V: EnumVariant> Format for Enum<V> {
     /// Formats the enum using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         self.type_def.fmt_head("enum", &[], fmt)?;
 
         fmt.block(|fmt| {

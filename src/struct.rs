@@ -2,7 +2,7 @@ use std::fmt::{self, Write};
 
 use crate::field::Field;
 use crate::fields::Fields;
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
 use crate::type_def::TypeDef;
 
 use crate::r#type::Type;
@@ -112,9 +112,12 @@ impl Struct {
         self.fields.tuple(ty);
         self
     }
+}
 
+
+impl Format for Struct {
     /// Formats the struct using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         self.type_def.fmt_head("struct", &[], fmt)?;
         self.fields.fmt(fmt)?;
 
