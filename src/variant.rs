@@ -42,7 +42,7 @@ impl Variant {
     pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         write!(fmt, "{}", self.name)?;
         self.fields.fmt(fmt)?;
-        write!(fmt, ",\n")?;
+        writeln!(fmt, ",")?;
 
         Ok(())
     }

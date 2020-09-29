@@ -124,13 +124,13 @@ impl Trait {
                         fmt_bound_rhs(&ty.bound, fmt)?;
                     }
 
-                    write!(fmt, ";\n")?;
+                    writeln!(fmt, ";")?;
                 }
             }
 
             for (i, func) in self.fns.iter().enumerate() {
                 if i != 0 || !assoc.is_empty() {
-                    write!(fmt, "\n")?;
+                    writeln!(fmt)?;
                 }
 
                 func.fmt(true, fmt)?;

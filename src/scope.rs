@@ -243,7 +243,7 @@ impl Scope {
         self.fmt(&mut Formatter::new(&mut ret)).unwrap();
 
         // Remove the trailing newline
-        if ret.as_bytes().last() == Some(&b'\n') {
+        if let Some(b'\n') = ret.as_bytes().last() {
             ret.pop();
         }
 
@@ -255,12 +255,12 @@ impl Scope {
         self.fmt_imports(fmt)?;
 
         if !self.imports.is_empty() {
-            write!(fmt, "\n")?;
+            writeln!(fmt)?;
         }
 
         for (i, item) in self.items.iter().enumerate() {
             if i != 0 {
-                write!(fmt, "\n")?;
+                writeln!(fmt)?;
             }
 
             match *item {
@@ -271,7 +271,7 @@ impl Scope {
                 Item::Enum(ref v) => v.fmt(fmt)?,
                 Item::Impl(ref v) => v.fmt(fmt)?,
                 Item::Raw(ref v) => {
-                    write!(fmt, "{}\n", v)?;
+                    writeln!(fmt, "{}", v)?;
                 }
             }
         }
@@ -321,9 +321,9 @@ impl Scope {
                             write!(fmt, "{}", ty)?;
                         }
 
-                        write!(fmt, "}};\n")?;
+                        writeln!(fmt, "}};")?;
                     } else if tys.len() == 1 {
-                        write!(fmt, "{};\n", tys[0])?;
+                        writeln!(fmt, "{};", tys[0])?;
                     }
                 }
             }
