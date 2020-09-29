@@ -7,6 +7,7 @@ use crate::r#struct::Struct;
 use crate::r#trait::Trait;
 
 
+#[non_exhaustive]
 #[derive(Debug, Clone)]
 pub enum Item {
     Module(Module),
