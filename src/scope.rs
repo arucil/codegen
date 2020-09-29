@@ -80,8 +80,8 @@ impl Scope {
     pub fn new_module(&mut self, name: impl Into<String>) -> &mut Module {
         self.push_module(Module::new(name));
 
-        match *self.items.last_mut().unwrap() {
-            Item::Module(ref mut v) => v,
+        match self.items.last_mut().unwrap() {
+            Item::Module(v) => v,
             _ => unreachable!(),
         }
     }
@@ -94,7 +94,7 @@ impl Scope {
         self.items
             .iter_mut()
             .filter_map(|item| match item {
-                &mut Item::Module(ref mut module) if module.name == *name => Some(module),
+                Item::Module(module) if module.name == *name => Some(module),
                 _ => None,
             })
             .next()
@@ -152,8 +152,8 @@ impl Scope {
     pub fn new_struct(&mut self, name: impl Into<String>) -> &mut Struct {
         self.push_struct(Struct::new(name));
 
-        match *self.items.last_mut().unwrap() {
-            Item::Struct(ref mut v) => v,
+        match self.items.last_mut().unwrap() {
+            Item::Struct(v) => v,
             _ => unreachable!(),
         }
     }
@@ -168,8 +168,8 @@ impl Scope {
     pub fn new_fn(&mut self, name: impl Into<String>) -> &mut Function {
         self.push_fn(Function::new(name));
 
-        match *self.items.last_mut().unwrap() {
-            Item::Function(ref mut v) => v,
+        match self.items.last_mut().unwrap() {
+            Item::Function(v) => v,
             _ => unreachable!(),
         }
     }
@@ -184,8 +184,8 @@ impl Scope {
     pub fn new_trait(&mut self, name: impl Into<String>) -> &mut Trait {
         self.push_trait(Trait::new(name));
 
-        match *self.items.last_mut().unwrap() {
-            Item::Trait(ref mut v) => v,
+        match self.items.last_mut().unwrap() {
+            Item::Trait(v) => v,
             _ => unreachable!(),
         }
     }
@@ -200,8 +200,8 @@ impl Scope {
     pub fn new_enum(&mut self, name: impl Into<String>) -> &mut Enum {
         self.push_enum(Enum::new(name));
 
-        match *self.items.last_mut().unwrap() {
-            Item::Enum(ref mut v) => v,
+        match self.items.last_mut().unwrap() {
+            Item::Enum(v) => v,
             _ => unreachable!(),
         }
     }
@@ -216,8 +216,8 @@ impl Scope {
     pub fn new_impl(&mut self, target: impl Into<Type>) -> &mut Impl {
         self.push_impl(Impl::new(target));
 
-        match *self.items.last_mut().unwrap() {
-            Item::Impl(ref mut v) => v,
+        match self.items.last_mut().unwrap() {
+            Item::Impl(v) => v,
             _ => unreachable!(),
         }
     }
@@ -263,14 +263,14 @@ impl Scope {
                 writeln!(fmt)?;
             }
 
-            match *item {
-                Item::Module(ref v) => v.fmt(fmt)?,
-                Item::Struct(ref v) => v.fmt(fmt)?,
-                Item::Function(ref v) => v.fmt(false, fmt)?,
-                Item::Trait(ref v) => v.fmt(fmt)?,
-                Item::Enum(ref v) => v.fmt(fmt)?,
-                Item::Impl(ref v) => v.fmt(fmt)?,
-                Item::Raw(ref v) => {
+            match item {
+                Item::Module(v) => v.fmt(fmt)?,
+                Item::Struct(v) => v.fmt(fmt)?,
+                Item::Function(v) => v.fmt(false, fmt)?,
+                Item::Trait(v) => v.fmt(fmt)?,
+                Item::Enum(v) => v.fmt(fmt)?,
+                Item::Impl(v) => v.fmt(fmt)?,
+                Item::Raw(v) => {
                     writeln!(fmt, "{}", v)?;
                 }
             }
@@ -305,7 +305,7 @@ impl Scope {
                 }
 
                 if !tys.is_empty() {
-                    if let Some(ref vis) = *vis {
+                    if let Some(vis) = vis {
                         write!(fmt, "{} ", vis)?;
                     }
 

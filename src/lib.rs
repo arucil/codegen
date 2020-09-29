@@ -45,6 +45,7 @@ mod r#impl;
 mod r#struct;
 mod r#trait;
 mod r#type;
+mod r#static;
 
 
 pub use associated_type::*;
@@ -62,3 +63,4 @@ pub use r#impl::*;
 pub use r#struct::*;
 pub use r#trait::*;
 pub use r#type::*;
+pub use r#static::*;

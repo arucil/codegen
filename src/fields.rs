@@ -18,11 +18,11 @@ pub enum Fields {
 impl Fields {
     pub fn push_named(&mut self, field: Field) -> &mut Self
     {
-        match *self {
+        match self {
             Fields::Empty => {
                 *self = Fields::Named(vec![field]);
             }
-            Fields::Named(ref mut fields) => {
+            Fields::Named(fields) => {
                 fields.push(field);
             }
             _ => panic!("field list is named"),
@@ -46,11 +46,11 @@ impl Fields {
     where
         T: Into<Type>,
     {
-        match *self {
+        match self {
             Fields::Empty => {
                 *self = Fields::Tuple(vec![ty.into()]);
             }
-            Fields::Tuple(ref mut fields) => {
+            Fields::Tuple(fields) => {
                 fields.push(ty.into());
             }
             _ => panic!("field list is tuple"),
@@ -60,8 +60,8 @@ impl Fields {
     }
 
     pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        match *self {
-            Fields::Named(ref fields) => {
+        match self {
+            Fields::Named(fields) => {
                 assert!(!fields.is_empty());
 
                 fmt.block(|fmt| {
@@ -84,7 +84,7 @@ impl Fields {
                     Ok(())
                 })?;
             }
-            Fields::Tuple(ref tys) => {
+            Fields::Tuple(tys) => {
                 assert!(!tys.is_empty());
 
                 write!(fmt, "(")?;
