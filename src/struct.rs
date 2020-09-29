@@ -123,10 +123,10 @@ impl Format for Struct {
 
         match self.fields {
             Fields::Empty => {
-                writeln!(fmt, ";")?;
+                write!(fmt, ";")?;
             }
             Fields::Tuple(..) => {
-                writeln!(fmt, ";")?;
+                write!(fmt, ";")?;
             }
             _ => {}
         }

@@ -7,36 +7,37 @@ use crate::r#enum::EnumVariant;
 
 /// Defines an enum variant.
 #[derive(Debug, Clone)]
-pub struct DiscriminantVariant {
+pub struct DisVariant {
     name: String,
-    discriminant: Option<String>,
+    /// discriminant
+    dis: Option<String>,
 }
 
 
-impl EnumVariant for DiscriminantVariant {
+impl EnumVariant for DisVariant {
     /// Return a new enum variant with the given name.
     fn new(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
-            discriminant: None,
+            dis: None,
         }
     }
 }
 
 
-impl DiscriminantVariant {
+impl DisVariant {
     /// Set the discriminant of the variant.
     pub fn discriminant(&mut self, dis: impl Into<String>) -> &mut Self {
-        self.discriminant = Some(dis.into());
+        self.dis = Some(dis.into());
         self
     }
 }
 
-impl Format for DiscriminantVariant {
+impl Format for DisVariant {
     /// Formats the variant using the given formatter.
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         write!(fmt, "{}", self.name)?;
-        if let Some(dis) = &self.discriminant {
+        if let Some(dis) = &self.dis {
             write!(fmt, " = {}", dis)?;
         }
         writeln!(fmt, ",")

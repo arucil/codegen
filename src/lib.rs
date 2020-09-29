@@ -39,7 +39,8 @@ mod module;
 mod scope;
 mod type_def;
 mod variant;
-mod discriminant_variant;
+mod dis_variant;
+mod var_def;
 
 mod r#enum;
 mod r#impl;
@@ -57,7 +58,8 @@ pub use import::*;
 pub use module::*;
 pub use scope::*;
 pub use variant::*;
-pub use discriminant_variant::*;
+pub use dis_variant::*;
+pub use var_def::*;
 
 pub use r#enum::*;
 pub use r#impl::*;

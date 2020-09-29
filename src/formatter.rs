@@ -55,7 +55,7 @@ impl<'a> Formatter<'a> {
 
         writeln!(self, "{{")?;
         self.indent(f)?;
-        writeln!(self, "}}")
+        write!(self, "}}")
     }
 
     /// Call the given function with the indentation level incremented by one.

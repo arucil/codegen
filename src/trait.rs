@@ -131,12 +131,13 @@ impl Format for Trait {
                 }
             }
 
-            for (i, func) in self.fns.iter().enumerate() {
-                if i != 0 || !assoc.is_empty() {
-                    writeln!(fmt)?;
-                }
+            if !assoc.is_empty() && !self.fns.is_empty() {
+                writeln!(fmt)?;
+            }
 
+            for func in &self.fns {
                 func.fmt(true, fmt)?;
+                writeln!(fmt)?;
             }
 
             Ok(())

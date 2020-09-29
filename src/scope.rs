@@ -11,7 +11,8 @@ use crate::function::Function;
 use crate::import::Import;
 use crate::item::Item;
 use crate::module::Module;
-use crate::discriminant_variant::DiscriminantVariant;
+use crate::dis_variant::DisVariant;
+use crate::var_def::VarDef;
 
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
@@ -217,11 +218,11 @@ impl Scope {
     pub fn new_discriminant_enum(
         &mut self,
         name: impl Into<String>
-    ) -> &mut Enum<DiscriminantVariant> {
+    ) -> &mut Enum<DisVariant> {
         self.push_discriminant_enum(Enum::new(name));
 
         match self.items.last_mut().unwrap() {
-            Item::DiscriminantEnum(v) => v,
+            Item::DisEnum(v) => v,
             _ => unreachable!(),
         }
     }
@@ -229,9 +230,9 @@ impl Scope {
     /// Push a enum definition
     pub fn push_discriminant_enum(
         &mut self,
-        item: Enum<DiscriminantVariant>,
+        item: Enum<DisVariant>,
     ) -> &mut Self {
-        self.items.push(Item::DiscriminantEnum(item));
+        self.items.push(Item::DisEnum(item));
         self
     }
 
@@ -256,6 +257,40 @@ impl Scope {
     /// This string will be included verbatim in the formatted string.
     pub fn raw(&mut self, val: impl Into<String>) -> &mut Self {
         self.items.push(Item::Raw(val.into()));
+        self
+    }
+
+    /// Push a new struct definition, returning a mutable reference to it.
+    pub fn new_static<S, T>(&mut self, name: S, ty: T) -> &mut VarDef
+    where
+        S: Into<String>,
+        T: Into<Type>,
+    {
+        self.push_var_def(VarDef::new_static(name, ty));
+
+        match self.items.last_mut().unwrap() {
+            Item::VarDef(v) => v,
+            _ => unreachable!(),
+        }
+    }
+
+    /// Push a new struct definition, returning a mutable reference to it.
+    pub fn new_const<S, T>(&mut self, name: S, ty: T) -> &mut VarDef
+    where
+        S: Into<String>,
+        T: Into<Type>,
+    {
+        self.push_var_def(VarDef::new_const(name, ty));
+
+        match self.items.last_mut().unwrap() {
+            Item::VarDef(v) => v,
+            _ => unreachable!(),
+        }
+    }
+
+    /// Push a variable definition
+    pub fn push_var_def(&mut self, item: VarDef) -> &mut Self {
+        self.items.push(Item::VarDef(item));
         self
     }
 
@@ -337,23 +372,22 @@ impl Format for Scope {
             writeln!(fmt)?;
         }
 
-        for (i, item) in self.items.iter().enumerate() {
-            if i != 0 {
-                writeln!(fmt)?;
-            }
-
+        for item in &self.items {
             match item {
                 Item::Module(v) => v.fmt(fmt)?,
                 Item::Struct(v) => v.fmt(fmt)?,
                 Item::Function(v) => v.fmt(false, fmt)?,
                 Item::Trait(v) => v.fmt(fmt)?,
                 Item::Enum(v) => v.fmt(fmt)?,
-                Item::DiscriminantEnum(v) => v.fmt(fmt)?,
+                Item::DisEnum(v) => v.fmt(fmt)?,
                 Item::Impl(v) => v.fmt(fmt)?,
+                Item::VarDef(v) => v.fmt(fmt)?,
                 Item::Raw(v) => {
-                    writeln!(fmt, "{}", v)?;
+                    write!(fmt, "{}", v)?;
                 }
             }
+
+            writeln!(fmt)?;
         }
 
         Ok(())

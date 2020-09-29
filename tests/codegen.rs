@@ -1,6 +1,6 @@
-extern crate codegen;
-
 use codegen::*;
+use pretty_assertions::assert_eq;
+
 #[test]
 fn empty_scope() {
     let scope = Scope::new();
@@ -21,6 +21,32 @@ struct Foo {
     one: usize,
     two: String,
 }"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn tuple_struct() {
+    let mut scope = Scope::new();
+
+    scope.new_struct("Foo")
+        .tuple_field("usize")
+        .tuple_field("String");
+
+    let expect = r#"
+struct Foo(usize, String);"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn unit_struct() {
+    let mut scope = Scope::new();
+
+    scope.new_struct("Foo");
+
+    let expect = r#"
+struct Foo;"#;
 
     assert_eq!(scope.to_string(), &expect[1..]);
 }
@@ -601,6 +627,46 @@ enum Foo {
     Bar = 37,
     Baz,
     Qux = -1,
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn var_def() {
+    let mut scope = Scope::new();
+
+    scope.new_static("FOO", "Vec<i32>")
+        .value("Vec::new()");
+    scope.new_const("BAR", "&'static str")
+        .value(r#""lorem ipsum""#);
+
+    let expect = r#"
+static FOO: Vec<i32> = Vec::new();
+const BAR: &'static str = "lorem ipsum";"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn var_def_multiline_value() {
+    let mut scope = Scope::new();
+    let mo = scope.new_module("foobar").scope();
+
+    mo.new_static("FOO", "Vec<i32>")
+        .value("Vec::new()");
+    mo.new_static("BAR", "fn(i32) -> i32")
+        .value("\
+(0..20).enumerate()
+    .map(|(i, x)| i * x * x)
+    .sum::<usize>()");
+
+    let expect = r#"
+mod foobar {
+    static FOO: Vec<i32> = Vec::new();
+    static BAR: fn(i32) -> i32 = (0..20).enumerate()
+        .map(|(i, x)| i * x * x)
+        .sum::<usize>();
 }"#;
 
     assert_eq!(scope.to_string(), &expect[1..]);
