@@ -1,10 +1,10 @@
 use std::fmt::{self, Write};
 
-use bound::Bound;
-use docs::Docs;
-use formatter::{Formatter, fmt_bounds};
+use crate::bound::Bound;
+use crate::docs::Docs;
+use crate::formatter::{Formatter, fmt_bounds};
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines a type definition.

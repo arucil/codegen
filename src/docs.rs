@@ -1,6 +1,6 @@
 use std::fmt::{self, Write};
 
-use formatter::Formatter;
+use crate::formatter::Formatter;
 
 
 #[derive(Debug, Clone)]

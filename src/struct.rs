@@ -1,11 +1,11 @@
 use std::fmt::{self, Write};
 
-use field::Field;
-use fields::Fields;
-use formatter::Formatter;
-use type_def::TypeDef;
+use crate::field::Field;
+use crate::fields::Fields;
+use crate::formatter::Formatter;
+use crate::type_def::TypeDef;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines a struct.

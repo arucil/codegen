@@ -1,7 +1,7 @@
 use std::fmt::{self, Write};
 
-use body::Body;
-use formatter::Formatter;
+use crate::body::Body;
+use crate::formatter::Formatter;
 
 
 /// Defines a code block. This is used to define a function body.

@@ -5,17 +5,17 @@ use std::fmt::{self, Write};
 
 use self::indexmap::IndexMap;
 
-use docs::Docs;
-use formatter::Formatter;
-use function::Function;
-use import::Import;
-use item::Item;
-use module::Module;
+use crate::docs::Docs;
+use crate::formatter::Formatter;
+use crate::function::Function;
+use crate::import::Import;
+use crate::item::Item;
+use crate::module::Module;
 
-use r#enum::Enum;
-use r#impl::Impl;
-use r#struct::Struct;
-use r#trait::Trait;
+use crate::r#enum::Enum;
+use crate::r#impl::Impl;
+use crate::r#struct::Struct;
+use crate::r#trait::Trait;
 
 
 /// Defines a scope.

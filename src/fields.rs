@@ -1,9 +1,9 @@
 use std::fmt::{self, Write};
 
-use field::Field;
-use formatter::Formatter;
+use crate::field::Field;
+use crate::formatter::Formatter;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines a set of fields.

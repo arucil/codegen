@@ -1,9 +1,9 @@
 use std::fmt::{self, Write};
 
-use fields::Fields;
-use formatter::Formatter;
+use crate::fields::Fields;
+use crate::formatter::Formatter;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines an enum variant.

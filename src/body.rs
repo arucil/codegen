@@ -1,7 +1,7 @@
 use std::fmt::{self, Write};
 
-use block::Block;
-use formatter::Formatter;
+use crate::block::Block;
+use crate::formatter::Formatter;
 
 
 #[derive(Debug, Clone)]

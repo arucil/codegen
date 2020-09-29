@@ -1,14 +1,14 @@
 use std::fmt::{self, Write};
 
-use block::Block;
-use body::Body;
-use bound::Bound;
-use docs::Docs;
-use field::Field;
-use formatter::{fmt_bounds, fmt_generics};
-use formatter::Formatter;
+use crate::block::Block;
+use crate::body::Body;
+use crate::bound::Bound;
+use crate::docs::Docs;
+use crate::field::Field;
+use crate::formatter::{fmt_bounds, fmt_generics};
+use crate::formatter::Formatter;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines a function.

@@ -1,12 +1,12 @@
 use std::fmt::{self, Write};
 
-use associated_type::AssociatedType;
-use bound::Bound;
-use formatter::{Formatter, fmt_bound_rhs};
-use function::Function;
-use type_def::TypeDef;
+use crate::associated_type::AssociatedType;
+use crate::bound::Bound;
+use crate::formatter::{Formatter, fmt_bound_rhs};
+use crate::function::Function;
+use crate::type_def::TypeDef;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Define a trait.

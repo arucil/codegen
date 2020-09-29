@@ -1,14 +1,14 @@
 use std::fmt::{self, Write};
 
-use docs::Docs;
-use formatter::Formatter;
-use function::Function;
-use scope::Scope;
+use crate::docs::Docs;
+use crate::formatter::Formatter;
+use crate::function::Function;
+use crate::scope::Scope;
 
-use r#enum::Enum;
-use r#impl::Impl;
-use r#struct::Struct;
-use r#trait::Trait;
+use crate::r#enum::Enum;
+use crate::r#impl::Impl;
+use crate::r#struct::Struct;
+use crate::r#trait::Trait;
 
 
 /// Defines a module.

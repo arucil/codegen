@@ -1,8 +1,8 @@
 use std::fmt::{self, Write};
 
-use bound::Bound;
+use crate::bound::Bound;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 const DEFAULT_INDENT: usize = 4;

@@ -1,11 +1,11 @@
 use std::fmt::{self, Write};
 
-use bound::Bound;
-use field::Field;
-use formatter::{Formatter, fmt_bounds, fmt_generics};
-use function::Function;
+use crate::bound::Bound;
+use crate::field::Field;
+use crate::formatter::{Formatter, fmt_bounds, fmt_generics};
+use crate::function::Function;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines an impl block.

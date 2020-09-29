@@ -1,6 +1,6 @@
-use bound::Bound;
+use crate::bound::Bound;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines an associated type.

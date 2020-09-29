@@ -1,10 +1,10 @@
 use std::fmt;
 
-use formatter::Formatter;
-use type_def::TypeDef;
-use variant::Variant;
+use crate::formatter::Formatter;
+use crate::type_def::TypeDef;
+use crate::variant::Variant;
 
-use r#type::Type;
+use crate::r#type::Type;
 
 
 /// Defines an enumeration.
