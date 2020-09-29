@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
 use crate::type_def::TypeDef;
 use crate::variant::Variant;
 
@@ -9,13 +9,18 @@ use crate::r#type::Type;
 
 /// Defines an enumeration.
 #[derive(Debug, Clone)]
-pub struct Enum {
+pub struct Enum<V = Variant> {
     type_def: TypeDef,
-    variants: Vec<Variant>,
+    variants: Vec<V>,
 }
 
+/// A trait
+pub trait EnumVariant: Format {
+    /// Create a new variant.
+    fn new(name: impl Into<String>) -> Self;
+}
 
-impl Enum {
+impl<V: EnumVariant> Enum<V> {
     /// Return a enum definition with the provided name.
     pub fn new(name: impl Into<String>) -> Self {
         Enum {
@@ -76,13 +81,13 @@ impl Enum {
     }
 
     /// Push a variant to the enum, returning a mutable reference to it.
-    pub fn new_variant(&mut self, name: impl Into<String>) -> &mut Variant {
-        self.push_variant(Variant::new(name));
+    pub fn new_variant(&mut self, name: impl Into<String>) -> &mut V {
+        self.push_variant(V::new(name));
         self.variants.last_mut().unwrap()
     }
 
     /// Push a variant to the enum.
-    pub fn push_variant(&mut self, item: Variant) -> &mut Self {
+    pub fn push_variant(&mut self, item: V) -> &mut Self {
         self.variants.push(item);
         self
     }

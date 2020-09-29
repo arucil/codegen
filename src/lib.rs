@@ -39,13 +39,13 @@ mod module;
 mod scope;
 mod type_def;
 mod variant;
+mod discriminant_variant;
 
 mod r#enum;
 mod r#impl;
 mod r#struct;
 mod r#trait;
 mod r#type;
-mod r#static;
 
 
 pub use associated_type::*;
@@ -57,10 +57,10 @@ pub use import::*;
 pub use module::*;
 pub use scope::*;
 pub use variant::*;
+pub use discriminant_variant::*;
 
 pub use r#enum::*;
 pub use r#impl::*;
 pub use r#struct::*;
 pub use r#trait::*;
 pub use r#type::*;
-pub use r#static::*;

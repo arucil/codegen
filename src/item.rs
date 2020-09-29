@@ -1,5 +1,6 @@
 use crate::function::Function;
 use crate::module::Module;
+use crate::discriminant_variant::DiscriminantVariant;
 
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
@@ -15,6 +16,7 @@ pub enum Item {
     Function(Function),
     Trait(Trait),
     Enum(Enum),
+    DiscriminantEnum(Enum<DiscriminantVariant>),
     Impl(Impl),
     Raw(String),
 }

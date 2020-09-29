@@ -1,7 +1,8 @@
 use std::fmt::{self, Write};
 
 use crate::fields::Fields;
-use crate::formatter::Formatter;
+use crate::formatter::{Formatter, Format};
+use crate::r#enum::EnumVariant;
 
 use crate::r#type::Type;
 
@@ -14,18 +15,22 @@ pub struct Variant {
 }
 
 
-impl Variant {
+impl EnumVariant for Variant {
     /// Return a new enum variant with the given name.
-    pub fn new(name: impl Into<String>) -> Self {
+    fn new(name: impl Into<String>) -> Self {
         Variant {
             name: name.into(),
             fields: Fields::Empty,
         }
     }
+}
 
+
+impl Variant {
     /// Add a named field to the variant.
-    pub fn named<T>(&mut self, name: impl Into<String>, ty: T) -> &mut Self
+    pub fn named<S, T>(&mut self, name: S, ty: T) -> &mut Self
     where
+        S: Into<String>,
         T: Into<Type>,
     {
         self.fields.named(name, ty);
@@ -33,17 +38,17 @@ impl Variant {
     }
 
     /// Add a tuple field to the variant.
-    pub fn tuple(&mut self, ty: &str) -> &mut Self {
+    pub fn tuple(&mut self, ty: impl Into<Type>) -> &mut Self {
         self.fields.tuple(ty);
         self
     }
+}
 
+impl Format for Variant {
     /// Formats the variant using the given formatter.
-    pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         write!(fmt, "{}", self.name)?;
         self.fields.fmt(fmt)?;
-        writeln!(fmt, ",")?;
-
-        Ok(())
+        writeln!(fmt, ",")
     }
 }

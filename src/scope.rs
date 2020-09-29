@@ -3,7 +3,7 @@ extern crate indexmap;
 
 use std::fmt::{self, Write};
 
-use self::indexmap::IndexMap;
+use indexmap::IndexMap;
 
 use crate::docs::Docs;
 use crate::formatter::Formatter;
@@ -11,6 +11,7 @@ use crate::function::Function;
 use crate::import::Import;
 use crate::item::Item;
 use crate::module::Module;
+use crate::discriminant_variant::DiscriminantVariant;
 
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
@@ -196,7 +197,7 @@ impl Scope {
         self
     }
 
-    /// Push a new struct definition, returning a mutable reference to it.
+    /// Push a new enum definition, returning a mutable reference to it.
     pub fn new_enum(&mut self, name: impl Into<String>) -> &mut Enum {
         self.push_enum(Enum::new(name));
 
@@ -206,9 +207,31 @@ impl Scope {
         }
     }
 
-    /// Push a structure definition
+    /// Push a enum definition
     pub fn push_enum(&mut self, item: Enum) -> &mut Self {
         self.items.push(Item::Enum(item));
+        self
+    }
+
+    /// Push a new enum definition, returning a mutable reference to it.
+    pub fn new_discriminant_enum(
+        &mut self,
+        name: impl Into<String>
+    ) -> &mut Enum<DiscriminantVariant> {
+        self.push_discriminant_enum(Enum::new(name));
+
+        match self.items.last_mut().unwrap() {
+            Item::DiscriminantEnum(v) => v,
+            _ => unreachable!(),
+        }
+    }
+
+    /// Push a enum definition
+    pub fn push_discriminant_enum(
+        &mut self,
+        item: Enum<DiscriminantVariant>,
+    ) -> &mut Self {
+        self.items.push(Item::DiscriminantEnum(item));
         self
     }
 
@@ -269,6 +292,7 @@ impl Scope {
                 Item::Function(v) => v.fmt(false, fmt)?,
                 Item::Trait(v) => v.fmt(fmt)?,
                 Item::Enum(v) => v.fmt(fmt)?,
+                Item::DiscriminantEnum(v) => v.fmt(fmt)?,
                 Item::Impl(v) => v.fmt(fmt)?,
                 Item::Raw(v) => {
                     writeln!(fmt, "{}", v)?;

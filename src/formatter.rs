@@ -8,6 +8,13 @@ use crate::r#type::Type;
 const DEFAULT_INDENT: usize = 4;
 
 
+/// A type must implement this trait to be able to be formatted with Formatter.
+pub trait Format {
+    /// Format the value with the given Formatter.
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result;
+}
+
+
 /// Configures how a scope is formatted.
 #[derive(Debug)]
 pub struct Formatter<'a> {

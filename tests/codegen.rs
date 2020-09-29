@@ -585,3 +585,23 @@ mod foo {
 
     assert_eq!(actual, &expect[1..]);
 }
+
+#[test]
+fn enum_discriminant() {
+    let mut scope = Scope::new();
+
+    let en = scope.new_discriminant_enum("Foo");
+
+    en.new_variant("Bar").discriminant("37");
+    en.new_variant("Baz");
+    en.new_variant("Qux").discriminant("-1");
+
+    let expect = r#"
+enum Foo {
+    Bar = 37,
+    Baz,
+    Qux = -1,
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
