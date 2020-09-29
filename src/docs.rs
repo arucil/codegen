@@ -10,15 +10,15 @@ pub struct Docs {
 
 
 impl Docs {
-    pub fn new(docs: &str) -> Self {
+    pub fn new(docs: impl Into<String>) -> Self {
         Docs {
-            docs: docs.to_string(),
+            docs: docs.into(),
         }
     }
 
     pub fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         for line in self.docs.lines() {
-            write!(fmt, "/// {}\n", line)?;
+            writeln!(fmt, "/// {}", line)?;
         }
 
         Ok(())

@@ -57,9 +57,9 @@ pub struct Function {
 
 impl Function {
     /// Return a new function definition.
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: impl Into<String>) -> Self {
         Function {
-            name: name.to_string(),
+            name: name.into(),
             docs: None,
             allow: None,
             vis: None,
@@ -76,20 +76,20 @@ impl Function {
     }
 
     /// Set the function documentation.
-    pub fn doc(&mut self, docs: &str) -> &mut Self {
+    pub fn doc(&mut self, docs: impl Into<String>) -> &mut Self {
         self.docs = Some(Docs::new(docs));
         self
     }
 
     /// Specify lint attribute to supress a warning or error.
-    pub fn allow(&mut self, allow: &str) -> &mut Self {
-        self.allow = Some(allow.to_string());
+    pub fn allow(&mut self, allow: impl Into<String>) -> &mut Self {
+        self.allow = Some(allow.into());
         self
     }
 
     /// Set the function visibility.
-    pub fn vis(&mut self, vis: &str) -> &mut Self {
-        self.vis = Some(vis.to_string());
+    pub fn vis(&mut self, vis: impl Into<String>) -> &mut Self {
+        self.vis = Some(vis.into());
         self
     }
 
@@ -100,8 +100,8 @@ impl Function {
     }
 
     /// Add a generic to the function.
-    pub fn generic(&mut self, name: &str) -> &mut Self {
-        self.generics.push(name.to_string());
+    pub fn generic(&mut self, name: impl Into<String>) -> &mut Self {
+        self.generics.push(name.into());
         self
     }
 
@@ -124,18 +124,19 @@ impl Function {
     }
 
     /// Add a function argument.
-    pub fn arg<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn arg<S, T>(&mut self, name: S, ty: T) -> &mut Self
     where
+        S: Into<String>,
         T: Into<Type>,
     {
         self.args.push(Field {
-            name: name.to_string(),
+            name: name.into(),
             ty: ty.into(),
             // While a `Field` is used here, both `documentation`
             // and `annotation` does not make sense for function arguments.
             // Simply use empty strings.
-            documentation: Vec::new(),
-            annotation: Vec::new(),
+            documentation: vec![],
+            annotation: vec![],
         });
 
         self
@@ -151,12 +152,13 @@ impl Function {
     }
 
     /// Add a `where` bound to the function.
-    pub fn bound<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn bound<S, T>(&mut self, name: S, ty: T) -> &mut Self
     where
+        S: Into<String>,
         T: Into<Type>,
     {
         self.bounds.push(Bound {
-            name: name.to_string(),
+            name: name.into(),
             bound: vec![ty.into()],
         });
         self
@@ -184,8 +186,8 @@ impl Function {
     /// // add a `#[test]` attribute
     /// func.attr("test");
     /// ```
-    pub fn attr(&mut self, attribute: &str) -> &mut Self {
-        self.attributes.push(attribute.to_string());
+    pub fn attr(&mut self, attribute: impl Into<String>) -> &mut Self {
+        self.attributes.push(attribute.into());
         self
     }
 
@@ -198,8 +200,8 @@ impl Function {
     /// // use the "C" calling convention
     /// extern_func.extern_abi("C");
     /// ```
-    pub fn extern_abi(&mut self, abi: &str) -> &mut Self {
-        self.extern_abi.replace(abi.to_string());
+    pub fn extern_abi(&mut self, abi: impl Into<String>) -> &mut Self {
+        self.extern_abi.replace(abi.into());
         self
     }
 

@@ -15,9 +15,9 @@ pub struct Block {
 
 impl Block {
     /// Returns an empty code block.
-    pub fn new(before: &str) -> Self {
+    pub fn new(before: impl Into<String>) -> Self {
         Block {
-            before: Some(before.to_string()),
+            before: Some(before.into()),
             after: None,
             body: vec![],
         }
@@ -39,8 +39,8 @@ impl Block {
     }
 
     /// Add a snippet after the block.
-    pub fn after(&mut self, after: &str) -> &mut Self {
-        self.after = Some(after.to_string());
+    pub fn after(&mut self, after: impl Into<String>) -> &mut Self {
+        self.after = Some(after.into());
         self
     }
 
@@ -56,7 +56,7 @@ impl Block {
             write!(fmt, " ")?;
         }
 
-        write!(fmt, "{{\n")?;
+        writeln!(fmt, "{{")?;
 
         fmt.indent(|fmt| {
             for b in &self.body {
@@ -72,7 +72,6 @@ impl Block {
             write!(fmt, "{}", after)?;
         }
 
-        write!(fmt, "\n")?;
-        Ok(())
+        writeln!(fmt)
     }
 }

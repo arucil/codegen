@@ -16,15 +16,15 @@ pub struct Variant {
 
 impl Variant {
     /// Return a new enum variant with the given name.
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: impl Into<String>) -> Self {
         Variant {
-            name: name.to_string(),
+            name: name.into(),
             fields: Fields::Empty,
         }
     }
 
     /// Add a named field to the variant.
-    pub fn named<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn named<T>(&mut self, name: impl Into<String>, ty: T) -> &mut Self
     where
         T: Into<Type>,
     {

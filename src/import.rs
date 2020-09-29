@@ -10,16 +10,16 @@ pub struct Import {
 
 impl Import {
     /// Return a new import.
-    pub fn new(path: &str, ty: &str) -> Self {
+    pub fn new(path: impl AsRef<str>, ty: impl AsRef<str>) -> Self {
         Import {
-            line: format!("{}::{}", path, ty),
+            line: format!("{}::{}", path.as_ref(), ty.as_ref()),
             vis: None,
         }
     }
 
     /// Set the import visibility.
-    pub fn vis(&mut self, vis: &str) -> &mut Self {
-        self.vis = Some(vis.to_string());
+    pub fn vis(&mut self, vis: impl Into<String>) -> &mut Self {
+        self.vis = Some(vis.into());
         self
     }
 }

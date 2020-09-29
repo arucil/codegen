@@ -9,6 +9,7 @@ use crate::r#enum::Enum;
 use crate::r#impl::Impl;
 use crate::r#struct::Struct;
 use crate::r#trait::Trait;
+use crate::r#type::Type;
 
 
 /// Defines a module.
@@ -30,9 +31,9 @@ pub struct Module {
 
 impl Module {
     /// Return a new, blank module
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: impl Into<String>) -> Self {
         Module {
-            name: name.to_string(),
+            name: name.into(),
             vis: None,
             docs: None,
             scope: Scope::new(),
@@ -45,8 +46,8 @@ impl Module {
     }
 
     /// Set the module visibility.
-    pub fn vis(&mut self, vis: &str) -> &mut Self {
-        self.vis = Some(vis.to_string());
+    pub fn vis(&mut self, vis: impl Into<String>) -> &mut Self {
+        self.vis = Some(vis.into());
         self
     }
 
@@ -54,7 +55,11 @@ impl Module {
     ///
     /// This results in a new `use` statement bein added to the beginning of the
     /// module.
-    pub fn import(&mut self, path: &str, ty: &str) -> &mut Self {
+    pub fn import(
+        &mut self,
+        path: impl Into<String>,
+        ty: impl AsRef<str>,
+    ) -> &mut Self {
         self.scope.import(path, ty);
         self
     }
@@ -71,7 +76,7 @@ impl Module {
     /// will return the existing definition instead.
     ///
     /// [`get_or_new_module`]: #method.get_or_new_module
-    pub fn new_module(&mut self, name: &str) -> &mut Module {
+    pub fn new_module(&mut self, name: impl Into<String>) -> &mut Module {
         self.scope.new_module(name)
     }
 
@@ -93,7 +98,13 @@ impl Module {
 
     /// Returns a mutable reference to a module, creating it if it does
     /// not exist.
-    pub fn get_or_new_module(&mut self, name: &str) -> &mut Module {
+    pub fn get_or_new_module<S>(
+        &mut self,
+        name: S,
+    ) -> &mut Module
+        where
+            S: AsRef<str> + Into<String>,
+    {
         self.scope.get_or_new_module(name)
     }
 
@@ -115,7 +126,7 @@ impl Module {
     }
 
     /// Push a new struct definition, returning a mutable reference to it.
-    pub fn new_struct(&mut self, name: &str) -> &mut Struct {
+    pub fn new_struct(&mut self, name: impl Into<String>) -> &mut Struct {
         self.scope.new_struct(name)
     }
 
@@ -126,7 +137,7 @@ impl Module {
     }
 
     /// Push a new function definition, returning a mutable reference to it.
-    pub fn new_fn(&mut self, name: &str) -> &mut Function {
+    pub fn new_fn(&mut self, name: impl Into<String>) -> &mut Function {
         self.scope.new_fn(name)
     }
 
@@ -137,7 +148,7 @@ impl Module {
     }
 
     /// Push a new enum definition, returning a mutable reference to it.
-    pub fn new_enum(&mut self, name: &str) -> &mut Enum {
+    pub fn new_enum(&mut self, name: impl Into<String>) -> &mut Enum {
         self.scope.new_enum(name)
     }
 
@@ -148,7 +159,7 @@ impl Module {
     }
 
     /// Push a new `impl` block, returning a mutable reference to it.
-    pub fn new_impl(&mut self, target: &str) -> &mut Impl {
+    pub fn new_impl(&mut self, target: impl Into<Type>) -> &mut Impl {
         self.scope.new_impl(target)
     }
 

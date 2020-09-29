@@ -16,6 +16,7 @@ use crate::r#enum::Enum;
 use crate::r#impl::Impl;
 use crate::r#struct::Struct;
 use crate::r#trait::Trait;
+use crate::r#type::Type;
 
 
 /// Defines a scope.
@@ -48,12 +49,17 @@ impl Scope {
     ///
     /// This results in a new `use` statement being added to the beginning of
     /// the scope.
-    pub fn import(&mut self, path: &str, ty: &str) -> &mut Import {
+    pub fn import(
+        &mut self,
+        path: impl Into<String>,
+        ty: impl AsRef<str>,
+    ) -> &mut Import {
         // handle cases where the caller wants to refer to a type namespaced
         // within the containing namespace, like "a::B".
-        let ty = ty.split("::").next().unwrap_or(ty);
+        let path = path.into();
+        let ty = ty.as_ref().split("::").next().unwrap_or(ty.as_ref());
         self.imports
-            .entry(path.to_string())
+            .entry(path.clone())
             .or_insert(IndexMap::new())
             .entry(ty.to_string())
             .or_insert_with(|| Import::new(path, ty))
@@ -71,7 +77,7 @@ impl Scope {
     /// will return the existing definition instead.
     ///
     /// [`get_or_new_module`]: #method.get_or_new_module
-    pub fn new_module(&mut self, name: &str) -> &mut Module {
+    pub fn new_module(&mut self, name: impl Into<String>) -> &mut Module {
         self.push_module(Module::new(name));
 
         match *self.items.last_mut().unwrap() {
@@ -102,7 +108,7 @@ impl Scope {
         self.items
             .iter()
             .filter_map(|item| match item {
-                &Item::Module(ref module) if module.name == *name => Some(module),
+                Item::Module(module) if module.name == *name => Some(module),
                 _ => None,
             })
             .next()
@@ -110,9 +116,15 @@ impl Scope {
 
     /// Returns a mutable reference to a module, creating it if it does
     /// not exist.
-    pub fn get_or_new_module(&mut self, name: &str) -> &mut Module {
-        if self.get_module(name).is_some() {
-            self.get_module_mut(name).unwrap()
+    pub fn get_or_new_module<S>(
+        &mut self,
+        name: S,
+    ) -> &mut Module
+        where
+            S: AsRef<str> + Into<String>,
+    {
+        if self.get_module(name.as_ref()).is_some() {
+            self.get_module_mut(name.as_ref()).unwrap()
         } else {
             self.new_module(name)
         }
@@ -137,7 +149,7 @@ impl Scope {
     }
 
     /// Push a new struct definition, returning a mutable reference to it.
-    pub fn new_struct(&mut self, name: &str) -> &mut Struct {
+    pub fn new_struct(&mut self, name: impl Into<String>) -> &mut Struct {
         self.push_struct(Struct::new(name));
 
         match *self.items.last_mut().unwrap() {
@@ -153,7 +165,7 @@ impl Scope {
     }
 
     /// Push a new function definition, returning a mutable reference to it.
-    pub fn new_fn(&mut self, name: &str) -> &mut Function {
+    pub fn new_fn(&mut self, name: impl Into<String>) -> &mut Function {
         self.push_fn(Function::new(name));
 
         match *self.items.last_mut().unwrap() {
@@ -169,7 +181,7 @@ impl Scope {
     }
 
     /// Push a new trait definition, returning a mutable reference to it.
-    pub fn new_trait(&mut self, name: &str) -> &mut Trait {
+    pub fn new_trait(&mut self, name: impl Into<String>) -> &mut Trait {
         self.push_trait(Trait::new(name));
 
         match *self.items.last_mut().unwrap() {
@@ -185,7 +197,7 @@ impl Scope {
     }
 
     /// Push a new struct definition, returning a mutable reference to it.
-    pub fn new_enum(&mut self, name: &str) -> &mut Enum {
+    pub fn new_enum(&mut self, name: impl Into<String>) -> &mut Enum {
         self.push_enum(Enum::new(name));
 
         match *self.items.last_mut().unwrap() {
@@ -201,7 +213,7 @@ impl Scope {
     }
 
     /// Push a new `impl` block, returning a mutable reference to it.
-    pub fn new_impl(&mut self, target: &str) -> &mut Impl {
+    pub fn new_impl(&mut self, target: impl Into<Type>) -> &mut Impl {
         self.push_impl(Impl::new(target));
 
         match *self.items.last_mut().unwrap() {
@@ -219,8 +231,8 @@ impl Scope {
     /// Push a raw string to the scope.
     ///
     /// This string will be included verbatim in the formatted string.
-    pub fn raw(&mut self, val: &str) -> &mut Self {
-        self.items.push(Item::Raw(val.to_string()));
+    pub fn raw(&mut self, val: impl Into<String>) -> &mut Self {
+        self.items.push(Item::Raw(val.into()));
         self
     }
 

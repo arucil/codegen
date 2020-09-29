@@ -23,7 +23,7 @@ pub struct TypeDef {
 
 impl TypeDef {
     /// Return a structure definition with the provided name
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: impl Into<String>) -> Self {
         TypeDef {
             ty: Type::new(name),
             vis: None,
@@ -36,41 +36,47 @@ impl TypeDef {
         }
     }
 
-    pub fn vis(&mut self, vis: &str) {
-        self.vis = Some(vis.to_string());
+    pub fn vis(&mut self, vis: impl Into<String>) {
+        self.vis = Some(vis.into());
     }
 
-    pub fn bound<T>(&mut self, name: &str, ty: T)
+    pub fn bound<S, T>(&mut self, name: S, ty: T)
     where
+        S: Into<String>,
         T: Into<Type>,
     {
         self.bounds.push(Bound {
-            name: name.to_string(),
+            name: name.into(),
             bound: vec![ty.into()],
         });
     }
 
-    pub fn r#macro(&mut self, r#macro: &str) {
-        self.macros.push(r#macro.to_string());
+    pub fn r#macro(&mut self, r#macro: impl Into<String>) {
+        self.macros.push(r#macro.into());
     }
 
-    pub fn doc(&mut self, docs: &str) {
+    pub fn doc(&mut self, docs: impl Into<String>) {
         self.docs = Some(Docs::new(docs));
     }
 
-    pub fn derive(&mut self, name: &str) {
-        self.derive.push(name.to_string());
+    pub fn derive(&mut self, name: impl Into<String>) {
+        self.derive.push(name.into());
     }
 
-    pub fn allow(&mut self, allow: &str) {
-        self.allow = Some(allow.to_string());
+    pub fn allow(&mut self, allow: impl Into<String>) {
+        self.allow = Some(allow.into());
     }
 
-    pub fn repr(&mut self, repr: &str) {
-        self.repr = Some(repr.to_string());
+    pub fn repr(&mut self, repr: impl Into<String>) {
+        self.repr = Some(repr.into());
     }
 
-    pub fn fmt_head(&self, keyword: &str, parents: &[Type], fmt: &mut Formatter) -> fmt::Result {
+    pub fn fmt_head(
+        &self,
+        keyword: impl AsRef<str>,
+        parents: &[Type],
+        fmt: &mut Formatter
+    ) -> fmt::Result {
         if let Some(ref docs) = self.docs {
             docs.fmt(fmt)?;
         }
@@ -84,7 +90,7 @@ impl TypeDef {
             write!(fmt, "{} ", vis)?;
         }
 
-        write!(fmt, "{} ", keyword)?;
+        write!(fmt, "{} ", keyword.as_ref())?;
         self.ty.fmt(fmt)?;
 
         if !parents.is_empty() {

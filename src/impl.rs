@@ -52,8 +52,8 @@ impl Impl {
     /// Add a generic to the impl block.
     ///
     /// This adds the generic for the block (`impl<T>`) and not the target type.
-    pub fn generic(&mut self, name: &str) -> &mut Self {
-        self.generics.push(name.to_string());
+    pub fn generic(&mut self, name: impl Into<String>) -> &mut Self {
+        self.generics.push(name.into());
         self
     }
 
@@ -76,40 +76,42 @@ impl Impl {
     }
 
     /// Add a macro to the impl block (e.g. `"#[async_trait]"`)
-    pub fn r#macro(&mut self, r#macro: &str) -> &mut Self {
-        self.macros.push(r#macro.to_string());
+    pub fn r#macro(&mut self, r#macro: impl Into<String>) -> &mut Self {
+        self.macros.push(r#macro.into());
         self
     }
 
     /// Set an associated type.
-    pub fn associate_type<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn associate_type<S, T>(&mut self, name: S, ty: T) -> &mut Self
     where
+        S: Into<String>,
         T: Into<Type>,
     {
         self.assoc_tys.push(Field {
-            name: name.to_string(),
+            name: name.into(),
             ty: ty.into(),
-            documentation: Vec::new(),
-            annotation: Vec::new(),
+            documentation: vec![],
+            annotation: vec![],
         });
 
         self
     }
 
     /// Add a `where` bound to the impl block.
-    pub fn bound<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn bound<S, T>(&mut self, name: S, ty: T) -> &mut Self
     where
+        S: Into<String>,
         T: Into<Type>,
     {
         self.bounds.push(Bound {
-            name: name.to_string(),
+            name: name.into(),
             bound: vec![ty.into()],
         });
         self
     }
 
     /// Push a new function definition, returning a mutable reference to it.
-    pub fn new_fn(&mut self, name: &str) -> &mut Function {
+    pub fn new_fn(&mut self, name: impl Into<String>) -> &mut Function {
         self.push_fn(Function::new(name));
         self.fns.last_mut().unwrap()
     }

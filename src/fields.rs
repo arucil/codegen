@@ -31,14 +31,14 @@ impl Fields {
         self
     }
 
-    pub fn named<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn named<T>(&mut self, name: impl Into<String>, ty: T) -> &mut Self
     where T: Into<Type>,
     {
         self.push_named(Field {
-            name: name.to_string(),
+            name: name.into(),
             ty: ty.into(),
-            documentation: Vec::new(),
-            annotation: Vec::new(),
+            documentation: vec![],
+            annotation: vec![],
         })
     }
 

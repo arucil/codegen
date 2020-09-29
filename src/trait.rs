@@ -22,7 +22,7 @@ pub struct Trait {
 
 impl Trait {
     /// Return a trait definition with the provided name
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: impl Into<String>) -> Self {
         Trait {
             type_def: TypeDef::new(name),
             parents: vec![],
@@ -38,19 +38,19 @@ impl Trait {
     }
 
     /// Set the trait visibility.
-    pub fn vis(&mut self, vis: &str) -> &mut Self {
+    pub fn vis(&mut self, vis: impl Into<String>) -> &mut Self {
         self.type_def.vis(vis);
         self
     }
 
     /// Add a generic to the trait
-    pub fn generic(&mut self, name: &str) -> &mut Self {
+    pub fn generic(&mut self, name: impl Into<Type>) -> &mut Self {
         self.type_def.ty.generic(name);
         self
     }
 
     /// Add a `where` bound to the trait.
-    pub fn bound<T>(&mut self, name: &str, ty: T) -> &mut Self
+    pub fn bound<T>(&mut self, name: impl Into<String>, ty: T) -> &mut Self
     where
         T: Into<Type>,
     {
@@ -59,7 +59,7 @@ impl Trait {
     }
 
     /// Add a macro to the trait def (e.g. `"#[async_trait]"`)
-    pub fn r#macro(&mut self, r#macro: &str) -> &mut Self {
+    pub fn r#macro(&mut self, r#macro: impl Into<String>) -> &mut Self {
         self.type_def.r#macro(r#macro);
         self
     }
@@ -74,16 +74,16 @@ impl Trait {
     }
 
     /// Set the trait documentation.
-    pub fn doc(&mut self, docs: &str) -> &mut Self {
+    pub fn doc(&mut self, docs: impl Into<String>) -> &mut Self {
         self.type_def.doc(docs);
         self
     }
 
     /// Add an associated type. Returns a mutable reference to the new
     /// associated type for futher configuration.
-    pub fn associated_type(&mut self, name: &str) -> &mut AssociatedType {
+    pub fn associated_type(&mut self, name: impl Into<String>) -> &mut AssociatedType {
         self.associated_tys.push(AssociatedType(Bound {
-            name: name.to_string(),
+            name: name.into(),
             bound: vec![],
         }));
 
@@ -91,7 +91,7 @@ impl Trait {
     }
 
     /// Push a new function definition, returning a mutable reference to it.
-    pub fn new_fn(&mut self, name: &str) -> &mut Function {
+    pub fn new_fn(&mut self, name: impl Into<String>) -> &mut Function {
         let mut func = Function::new(name);
         func.body = None;
 
