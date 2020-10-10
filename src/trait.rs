@@ -1,6 +1,6 @@
 use std::fmt::{self, Write};
 
-use crate::associated_type::AssociatedType;
+use crate::assoc_type::AssociatedType;
 use crate::bound::Bound;
 use crate::formatter::{Formatter, Format, fmt_bound_rhs};
 use crate::function::Function;

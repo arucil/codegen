@@ -1,9 +1,9 @@
 use std::fmt::{self, Write};
 
 use crate::bound::Bound;
-use crate::field::Field;
 use crate::formatter::{Formatter, Format, fmt_bounds, fmt_generics};
 use crate::function::Function;
+use crate::name_ty_pair::NameTypePair;
 
 use crate::r#type::Type;
 
@@ -21,7 +21,7 @@ pub struct Impl {
     impl_trait: Option<Type>,
 
     /// Associated types
-    assoc_tys: Vec<Field>,
+    assoc_tys: Vec<NameTypePair>,
 
     /// Bounds
     bounds: Vec<Bound>,
@@ -87,11 +87,9 @@ impl Impl {
         S: Into<String>,
         T: Into<Type>,
     {
-        self.assoc_tys.push(Field {
+        self.assoc_tys.push(NameTypePair {
             name: name.into(),
             ty: ty.into(),
-            documentation: vec![],
-            annotation: vec![],
         });
 
         self
@@ -146,12 +144,10 @@ impl Format for Impl {
 
         fmt.block(|fmt| {
             // format associated types
-            if !self.assoc_tys.is_empty() {
-                for ty in &self.assoc_tys {
-                    write!(fmt, "type {} = ", ty.name)?;
-                    ty.ty.fmt(fmt)?;
-                    writeln!(fmt, ";")?;
-                }
+            for ty in &self.assoc_tys {
+                write!(fmt, "type {} = ", ty.name)?;
+                ty.ty.fmt(fmt)?;
+                writeln!(fmt, ";")?;
             }
 
             let mut newline = !self.assoc_tys.is_empty();

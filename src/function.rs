@@ -4,7 +4,7 @@ use crate::block::Block;
 use crate::body::Body;
 use crate::bound::Bound;
 use crate::docs::Docs;
-use crate::field::Field;
+use crate::name_ty_pair::NameTypePair;
 use crate::formatter::{fmt_bounds, fmt_generics};
 use crate::formatter::{Formatter, Format};
 
@@ -33,7 +33,7 @@ pub struct Function {
     arg_self: Option<String>,
 
     /// Function arguments
-    args: Vec<Field>,
+    args: Vec<NameTypePair>,
 
     /// Return type
     ret: Option<Type>,
@@ -129,14 +129,9 @@ impl Function {
         S: Into<String>,
         T: Into<Type>,
     {
-        self.args.push(Field {
+        self.args.push(NameTypePair {
             name: name.into(),
-            ty: ty.into(),
-            // While a `Field` is used here, both `documentation`
-            // and `annotation` does not make sense for function arguments.
-            // Simply use empty strings.
-            documentation: vec![],
-            annotation: vec![],
+            ty: ty.into()
         });
 
         self

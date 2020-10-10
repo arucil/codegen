@@ -34,12 +34,7 @@ impl Fields {
     pub fn named<T>(&mut self, name: impl Into<String>, ty: T) -> &mut Self
     where T: Into<Type>,
     {
-        self.push_named(Field {
-            name: name.into(),
-            ty: ty.into(),
-            documentation: vec![],
-            annotation: vec![],
-        })
+        self.push_named(Field::new(name, ty))
     }
 
     pub fn tuple<T>(&mut self, ty: T) -> &mut Self
@@ -65,19 +60,16 @@ impl Format for Fields {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         match self {
             Fields::Named(fields) => {
-                assert!(!fields.is_empty());
-
                 fmt.block(|fmt| {
                     for f in fields {
-                        if !f.documentation.is_empty() {
-                            for doc in &f.documentation {
-                                writeln!(fmt, "/// {}", doc)?;
-                            }
+                        for doc in &f.documentation {
+                            writeln!(fmt, "/// {}", doc)?;
                         }
-                        if !f.annotation.is_empty() {
-                            for ann in &f.annotation {
-                                writeln!(fmt, "{}", ann)?;
-                            }
+                        for ann in &f.annotation {
+                            writeln!(fmt, "{}", ann)?;
+                        }
+                        if let Some(vis) = &f.vis {
+                            write!(fmt, "{} ", vis)?;
                         }
                         write!(fmt, "{}: ", f.name)?;
                         f.ty.fmt(fmt)?;
@@ -88,14 +80,14 @@ impl Format for Fields {
                 })?;
             }
             Fields::Tuple(tys) => {
-                assert!(!tys.is_empty());
-
                 write!(fmt, "(")?;
 
-                for (i, ty) in tys.iter().enumerate() {
-                    if i != 0 {
+                let mut comma = false;
+                for ty in tys {
+                    if comma {
                         write!(fmt, ", ")?;
                     }
+                    comma = true;
                     ty.fmt(fmt)?;
                 }
 

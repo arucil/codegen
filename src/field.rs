@@ -4,6 +4,9 @@ use crate::r#type::Type;
 /// Defines a struct field.
 #[derive(Debug, Clone)]
 pub struct Field {
+    /// visibility
+    pub vis: Option<String>,
+
     /// Field name
     pub name: String,
 
@@ -26,11 +29,17 @@ impl Field {
             T: Into<Type>,
     {
         Field {
+            vis: None,
             name: name.into(),
             ty: ty.into(),
             documentation: vec![],
             annotation: vec![],
         }
+    }
+
+    /// Set field's visibility.
+    pub fn vis(&mut self, vis: impl Into<String>) {
+        self.vis = Some(vis.into());
     }
 
     /// Set field's documentation.

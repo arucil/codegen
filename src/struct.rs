@@ -101,6 +101,21 @@ impl Struct {
         self
     }
 
+    /// Add a public named field to the struct.
+    ///
+    /// A struct can either set named fields with this function or tuple fields
+    /// with `tuple_field`, but not both.
+    pub fn field_pub<S, T>(&mut self, name: S, ty: T) -> &mut Self
+    where
+        S: Into<String>,
+        T: Into<Type>,
+    {
+        let mut field = Field::new(name, ty);
+        field.vis("pub");
+        self.fields.push_named(field);
+        self
+    }
+
     /// Add a tuple field to the struct.
     ///
     /// A struct can either set tuple fields with this function or named fields

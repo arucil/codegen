@@ -24,7 +24,8 @@
 //! println!("{}", scope.to_string());
 //! ```
 
-mod associated_type;
+mod assoc_type;
+mod name_ty_pair;
 mod block;
 mod body;
 mod bound;
@@ -49,7 +50,7 @@ mod r#trait;
 mod r#type;
 
 
-pub use associated_type::*;
+pub use assoc_type::*;
 pub use block::*;
 pub use field::*;
 pub use formatter::*;

@@ -725,3 +725,23 @@ impl Bar {
 
     assert_eq!(scope.to_string(), &expect[1..]);
 }
+
+#[test]
+fn struct_fields_with_vis() {
+    let mut scope = Scope::new();
+
+    let s = scope.new_struct("Foo");
+    s.field_pub("one", "usize");
+    let mut f = Field::new("two", "String");
+    f.vis("pub(in super::foo::bar)");
+    s.push_field(f);
+
+
+    let expect = r#"
+struct Foo {
+    pub one: usize,
+    pub(in super::foo::bar) two: String,
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
