@@ -131,11 +131,13 @@ impl Format for Trait {
                 }
             }
 
-            if !assoc.is_empty() && !self.fns.is_empty() {
-                writeln!(fmt)?;
-            }
-
+            let mut newline = !assoc.is_empty();
             for func in &self.fns {
+                if newline {
+                    writeln!(fmt)?;
+                }
+                newline = true;
+
                 func.fmt(true, fmt)?;
                 writeln!(fmt)?;
             }

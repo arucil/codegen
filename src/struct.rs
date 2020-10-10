@@ -128,7 +128,8 @@ impl Format for Struct {
             Fields::Tuple(..) => {
                 write!(fmt, ";")?;
             }
-            _ => {}
+            _ => {
+            }
         }
 
         Ok(())

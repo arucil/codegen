@@ -154,12 +154,16 @@ impl Format for Impl {
                 }
             }
 
-            for (i, func) in self.fns.iter().enumerate() {
-                if i != 0 || !self.assoc_tys.is_empty() {
+            let mut newline = !self.assoc_tys.is_empty();
+
+            for func in &self.fns {
+                if newline {
                     writeln!(fmt)?;
                 }
+                newline = true;
 
                 func.fmt(false, fmt)?;
+                writeln!(fmt)?;
             }
 
             Ok(())

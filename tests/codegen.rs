@@ -643,6 +643,7 @@ fn var_def() {
 
     let expect = r#"
 static FOO: Vec<i32> = Vec::new();
+
 const BAR: &'static str = "lorem ipsum";"#;
 
     assert_eq!(scope.to_string(), &expect[1..]);
@@ -664,9 +665,62 @@ fn var_def_multiline_value() {
     let expect = r#"
 mod foobar {
     static FOO: Vec<i32> = Vec::new();
+
     static BAR: fn(i32) -> i32 = (0..20).enumerate()
         .map(|(i, x)| i * x * x)
         .sum::<usize>();
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn multiple_functions_in_trait() {
+    let mut scope = Scope::new();
+    let trt = scope.new_trait("Foo");
+
+    let f = trt.new_fn("foo");
+    f.line("let mut a = 1;");
+    f.line("a = 2;");
+
+    let g = trt.new_fn("bar");
+    g.line("panic!()");
+
+    let expect = r#"
+trait Foo {
+    fn foo() {
+        let mut a = 1;
+        a = 2;
+    }
+
+    fn bar() {
+        panic!()
+    }
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn multiple_functions_in_impl() {
+    let mut scope = Scope::new();
+    let imp = scope.new_impl("Bar");
+
+    let f = imp.new_fn("foo");
+    f.line("panic!();");
+
+    let g = imp.new_fn("bar");
+    g.line("()");
+
+    let expect = r#"
+impl Bar {
+    fn foo() {
+        panic!();
+    }
+
+    fn bar() {
+        ()
+    }
 }"#;
 
     assert_eq!(scope.to_string(), &expect[1..]);

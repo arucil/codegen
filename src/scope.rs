@@ -372,7 +372,13 @@ impl Format for Scope {
             writeln!(fmt)?;
         }
 
+        let mut newline = false;
         for item in &self.items {
+            if newline {
+                writeln!(fmt)?;
+            }
+            newline = true;
+
             match item {
                 Item::Module(v) => v.fmt(fmt)?,
                 Item::Struct(v) => v.fmt(fmt)?,
