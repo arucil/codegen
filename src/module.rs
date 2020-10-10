@@ -4,6 +4,7 @@ use crate::docs::Docs;
 use crate::formatter::{Formatter, Format};
 use crate::function::Function;
 use crate::scope::Scope;
+use crate::attr::Attr;
 
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
@@ -19,10 +20,13 @@ pub struct Module {
     pub name: String,
 
     /// Visibility
-    vis: Option<String>,
+    pub vis: Option<String>,
 
     /// Module documentation
     docs: Option<Docs>,
+
+    /// Outer attributes
+    attrs: Vec<Attr>,
 
     /// Contents of the module
     scope: Scope,
@@ -36,6 +40,7 @@ impl Module {
             name: name.into(),
             vis: None,
             docs: None,
+            attrs: vec![],
             scope: Scope::new(),
         }
     }
@@ -49,6 +54,24 @@ impl Module {
     pub fn vis(&mut self, vis: impl Into<String>) -> &mut Self {
         self.vis = Some(vis.into());
         self
+    }
+
+    /// Set the module documentation.
+    pub fn doc(&mut self, docs: impl Into<String>) {
+        self.docs = Some(Docs::new(docs));
+    }
+
+    /// Push an outer attribute.
+    pub fn push_attr(&mut self, attr: Attr) -> &mut Self {
+        self.attrs.push(attr);
+        self
+    }
+
+    /// Create an outer attribute.
+    pub fn new_attr(&mut self, name: impl Into<String>) -> &mut Attr {
+        self.push_attr(Attr::new(name));
+
+        self.attrs.last_mut().unwrap()
     }
 
     /// Import a type into the module's scope.
@@ -180,6 +203,14 @@ impl Module {
 impl Format for Module {
     /// Formats the module using the given formatter.
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        if let Some(docs) = &self.docs {
+            docs.fmt(fmt, false)?;
+        }
+
+        for attr in &self.attrs {
+            attr.fmt(fmt, false)?;
+        }
+
         if let Some(ref vis) = self.vis {
             write!(fmt, "{} ", vis)?;
         }

@@ -1,6 +1,6 @@
 use std::fmt::{self, Write};
 
-use crate::formatter::{Formatter, Format};
+use crate::formatter::Formatter;
 
 
 #[derive(Debug, Clone)]
@@ -15,12 +15,16 @@ impl Docs {
             docs: docs.into(),
         }
     }
-}
 
-impl Format for Docs {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+    pub fn fmt(&self, fmt: &mut Formatter, inner: bool) -> fmt::Result {
+        let suffix = if inner {
+            '!'
+        } else {
+            '/'
+        };
+
         for line in self.docs.lines() {
-            writeln!(fmt, "/// {}", line)?;
+            writeln!(fmt, "//{} {}", suffix, line)?;
         }
 
         Ok(())

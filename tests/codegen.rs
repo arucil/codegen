@@ -745,3 +745,112 @@ struct Foo {
 
     assert_eq!(scope.to_string(), &expect[1..]);
 }
+
+#[test]
+fn empty_scope_with_inner_docs() {
+    let mut scope = Scope::new();
+    scope.doc("\
+    lorem ipsum\n\
+    dolor sit amet.");
+
+    let expect = r#"
+//! lorem ipsum
+//! dolor sit amet."#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn scope_with_inner_docs() {
+    let mut scope = Scope::new();
+    scope.doc("\
+    lorem ipsum\n\
+    dolor sit amet.");
+
+    scope.new_struct("Foo");
+
+    let expect = r#"
+//! lorem ipsum
+//! dolor sit amet.
+
+struct Foo;"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn scope_with_inner_attrs() {
+    let mut scope = Scope::new();
+    scope.doc("\
+    lorem ipsum\n\
+    dolor sit amet.");
+
+    scope.new_attr("foobar");
+    scope.new_attr("feature").arg_delimited("box_patterns");
+
+    scope.new_struct("Foo");
+
+    let expect = r#"
+//! lorem ipsum
+//! dolor sit amet.
+
+#![foobar]
+#![feature(box_patterns)]
+
+struct Foo;"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn mod_with_docs() {
+    let mut scope = Scope::new();
+    let m = scope.new_module("foo");
+
+    m.doc("\
+    lorem ipsum\n\
+    dolor sit amet.");
+
+    m.scope().doc("\
+    foobar");
+
+    let expect = r#"
+/// lorem ipsum
+/// dolor sit amet.
+mod foo {
+    //! foobar
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}
+
+#[test]
+fn mod_with_outer_attrs() {
+    let mut scope = Scope::new();
+    let m = scope.new_module("foo");
+
+    m.new_attr("foobar");
+    m.new_attr("allow").arg_delimited("dead_code, non_camel_case_types");
+
+    m.doc("\
+    lorem ipsum\n\
+    dolor sit amet.");
+
+    m.scope().doc("\
+    foobar");
+
+    m.scope().new_attr("recursion_limit").arg_expr("200 + 1");
+
+    let expect = r#"
+/// lorem ipsum
+/// dolor sit amet.
+#[foobar]
+#[allow(dead_code, non_camel_case_types)]
+mod foo {
+    //! foobar
+
+    #![recursion_limit = 200 + 1]
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}

@@ -42,6 +42,8 @@ mod type_def;
 mod variant;
 mod dis_variant;
 mod var_def;
+mod attr;
+mod attr_arg;
 
 mod r#enum;
 mod r#impl;
@@ -61,6 +63,8 @@ pub use scope::*;
 pub use variant::*;
 pub use dis_variant::*;
 pub use var_def::*;
+pub use attr::*;
+pub use attr_arg::*;
 
 pub use r#enum::*;
 pub use r#impl::*;

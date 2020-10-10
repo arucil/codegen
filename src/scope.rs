@@ -13,6 +13,7 @@ use crate::item::Item;
 use crate::module::Module;
 use crate::dis_variant::DisVariant;
 use crate::var_def::VarDef;
+use crate::attr::Attr;
 
 use crate::r#enum::Enum;
 use crate::r#impl::Impl;
@@ -29,6 +30,9 @@ pub struct Scope {
     /// Scope documentation
     docs: Option<Docs>,
 
+    /// Inner attributes
+    attrs: Vec<Attr>,
+
     /// Imports
     imports: IndexMap<String, IndexMap<String, Import>>,
 
@@ -44,7 +48,26 @@ impl Scope {
             docs: None,
             imports: IndexMap::new(),
             items: vec![],
+            attrs: vec![],
         }
+    }
+
+    /// Set the inner documentation.
+    pub fn doc(&mut self, docs: impl Into<String>) {
+        self.docs = Some(Docs::new(docs));
+    }
+
+    /// Push an inner attribute.
+    pub fn push_attr(&mut self, attr: Attr) -> &mut Self {
+        self.attrs.push(attr);
+        self
+    }
+
+    /// Create an inner attribute.
+    pub fn new_attr(&mut self, name: impl Into<String>) -> &mut Attr {
+        self.push_attr(Attr::new(name));
+
+        self.attrs.last_mut().unwrap()
     }
 
     /// Import a type into the scope.
@@ -366,13 +389,40 @@ impl Scope {
 impl Format for Scope {
     /// Formats the scope using the given formatter.
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        self.fmt_imports(fmt)?;
-
-        if !self.imports.is_empty() {
-            writeln!(fmt)?;
+        let has_docs;
+        if let Some(docs) = &self.docs {
+            has_docs = true;
+            docs.fmt(fmt, true)?;
+        } else {
+            has_docs = false;
         }
 
-        let mut newline = false;
+        let has_attrs;
+        if !self.attrs.is_empty() {
+            has_attrs = true;
+            if has_docs {
+                writeln!(fmt)?;
+            }
+
+            for attr in &self.attrs {
+                attr.fmt(fmt, true)?;
+            }
+        } else {
+            has_attrs = false;
+        }
+
+        let has_imports;
+        if !self.imports.is_empty() {
+            has_imports = true;
+            if has_attrs || has_docs {
+                writeln!(fmt)?;
+            }
+            self.fmt_imports(fmt)?;
+        } else {
+            has_imports = false;
+        }
+
+        let mut newline = has_imports || has_attrs || has_docs;
         for item in &self.items {
             if newline {
                 writeln!(fmt)?;
