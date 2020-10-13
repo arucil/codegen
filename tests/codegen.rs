@@ -854,3 +854,21 @@ mod foo {
 
     assert_eq!(scope.to_string(), &expect[1..]);
 }
+
+#[test]
+fn function_with_mut_parameter() {
+    let mut scope = Scope::new();
+
+    let f = scope.new_fn("foo");
+    f.arg_mut("bar", "String");
+    f.arg("baz", "bool");
+    f.ret("usize");
+    f.line("panic!()");
+
+    let expect = r#"
+fn foo(mut bar: String, baz: bool) -> usize {
+    panic!()
+}"#;
+
+    assert_eq!(scope.to_string(), &expect[1..]);
+}

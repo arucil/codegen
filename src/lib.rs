@@ -44,6 +44,7 @@ mod dis_variant;
 mod var_def;
 mod attr;
 mod attr_arg;
+mod param;
 
 mod r#enum;
 mod r#impl;

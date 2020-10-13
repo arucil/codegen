@@ -4,9 +4,9 @@ use crate::block::Block;
 use crate::body::Body;
 use crate::bound::Bound;
 use crate::docs::Docs;
-use crate::name_ty_pair::NameTypePair;
 use crate::formatter::{fmt_bounds, fmt_generics};
 use crate::formatter::{Formatter, Format};
+use crate::param::Param;
 
 use crate::r#type::Type;
 
@@ -30,10 +30,10 @@ pub struct Function {
     generics: Vec<String>,
 
     /// If the function takes `&self` or `&mut self`
-    arg_self: Option<String>,
+    param_self: Option<String>,
 
     /// Function arguments
-    args: Vec<NameTypePair>,
+    params: Vec<Param>,
 
     /// Return type
     ret: Option<Type>,
@@ -64,8 +64,8 @@ impl Function {
             allow: None,
             vis: None,
             generics: vec![],
-            arg_self: None,
-            args: vec![],
+            param_self: None,
+            params: vec![],
             ret: None,
             bounds: vec![],
             body: Some(vec![]),
@@ -107,19 +107,19 @@ impl Function {
 
     /// Add `self` as a function argument.
     pub fn arg_self(&mut self) -> &mut Self {
-        self.arg_self = Some("self".to_string());
+        self.param_self = Some("self".to_string());
         self
     }
 
     /// Add `&self` as a function argument.
     pub fn arg_ref_self(&mut self) -> &mut Self {
-        self.arg_self = Some("&self".to_string());
+        self.param_self = Some("&self".to_string());
         self
     }
 
     /// Add `&mut self` as a function argument.
     pub fn arg_mut_self(&mut self) -> &mut Self {
-        self.arg_self = Some("&mut self".to_string());
+        self.param_self = Some("&mut self".to_string());
         self
     }
 
@@ -129,9 +129,25 @@ impl Function {
         S: Into<String>,
         T: Into<Type>,
     {
-        self.args.push(NameTypePair {
+        self.params.push(Param {
             name: name.into(),
-            ty: ty.into()
+            ty: ty.into(),
+            modi: None,
+        });
+
+        self
+    }
+
+    /// Add a mutable function argument.
+    pub fn arg_mut<S, T>(&mut self, name: S, ty: T) -> &mut Self
+    where
+        S: Into<String>,
+        T: Into<Type>,
+    {
+        self.params.push(Param {
+            name: name.into(),
+            ty: ty.into(),
+            modi: Some("mut".to_owned()),
         });
 
         self
@@ -245,17 +261,22 @@ impl Function {
 
         write!(fmt, "(")?;
 
-        if let Some(ref s) = self.arg_self {
+        if let Some(s) = &self.param_self {
             write!(fmt, "{}", s)?;
         }
 
-        for (i, arg) in self.args.iter().enumerate() {
-            if i != 0 || self.arg_self.is_some() {
+        let mut comma = self.param_self.is_some();
+        for param in &self.params {
+            if comma {
                 write!(fmt, ", ")?;
             }
+            comma = true;
 
-            write!(fmt, "{}: ", arg.name)?;
-            arg.ty.fmt(fmt)?;
+            if let Some(modi) = &param.modi {
+                write!(fmt, "{} ", modi)?;
+            }
+            write!(fmt, "{}: ", param.name)?;
+            param.ty.fmt(fmt)?;
         }
 
         write!(fmt, ")")?;
